@@ -3316,3 +3316,107 @@ int main() {
     return 0;
 }
 
+student database
+
+# File to store student database
+DATABASE="students.txt"
+
+# Function to display the menu
+show_menu() {
+    echo "------------------------------------"
+    echo "Student Database Operations"
+    echo "------------------------------------"
+    echo "1) Insert a student record"
+    echo "2) Delete a student record"
+    echo "3) Update a student record"
+    echo "4) Search a student record"
+    echo "5) Exit"
+    echo "------------------------------------"
+}
+
+# Function to insert a student record
+insert_student() {
+    echo "Enter student ID:"
+    read id
+    echo "Enter student name:"
+    read name
+    echo "Enter student age:"
+    read age
+    echo "Enter student course:"
+    read course
+
+    # Insert into the database file
+    echo "$id $name $age $course" >> "$DATABASE"
+    echo "Student record inserted successfully."
+}
+
+# Function to delete a student record
+delete_student() {
+    echo "Enter the student ID to delete:"
+    read id
+
+    # Check if the student exists
+    grep -q "$id" "$DATABASE"
+    if [ $? -eq 0 ]; then
+        # Remove the record from the file
+        grep -v "$id" "$DATABASE" > temp.txt && mv temp.txt "$DATABASE"
+        echo "Student record deleted successfully."
+    else
+        echo "Student record with ID $id not found."
+    fi
+}
+
+# Function to update a student record
+update_student() {
+    echo "Enter the student ID to update:"
+    read id
+
+    # Check if the student exists
+    grep -q "$id" "$DATABASE"
+    if [ $? -eq 0 ]; then
+        # Get the new details for the student
+        echo "Enter new name:"
+        read name
+        echo "Enter new age:"
+        read age
+        echo "Enter new course:"
+        read course
+
+        # Update the record
+        sed -i "/$id/c\\$id $name $age $course" "$DATABASE"
+        echo "Student record updated successfully."
+    else
+        echo "Student record with ID $id not found."
+    fi
+}
+
+# Function to search for a student record
+search_student() {
+    echo "Enter the student ID to search:"
+    read id
+
+    # Search the record
+    grep "$id" "$DATABASE" > /dev/null
+    if [ $? -eq 0 ]; then
+        echo "Student record found:"
+        grep "$id" "$DATABASE"
+    else
+        echo "Student record with ID $id not found."
+    fi
+}
+
+# Main loop to interact with the user
+while true; do
+    show_menu
+    echo "Choose an option (1-5):"
+    read choice
+
+    case $choice in
+        1) insert_student ;;
+        2) delete_student ;;
+        3) update_student ;;
+        4) search_student ;;
+        5) exit 0 ;;
+        *) echo "Invalid option. Please try again." ;;
+    esac
+done
